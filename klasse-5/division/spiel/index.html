@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Divisions-Adventskalender – Mathe Klasse 5</title>
+<style>
+  /* VOICE: festlich-ruhig, für 10- bis 11-Jährige, klar lesbar
+     IDEA: ein echter Adventskalender – jede gelöste Aufgabe öffnet ein Türchen
+     PICTURE: Kalender mit 10 Türchen, am Ende ein Adventskranz bei Nacht
+     COLOUR and TYPE: Nachtblau, Weihnachtsrot, Gold; Systemschrift, groß
+     LAYOUT: eine Spalte, Aufgabe oben, Zifferntasten unten, handytauglich */
+  :root{
+    --bg:#0f1e33; --panel:#16294a; --panel2:#1d3560; --ink:#f3f6fb; --muted:#a9b8d3;
+    --accent:#ffc533; --ok:#3ccf8e; --bad:#ff6b6b; --blue:#5aa9ff; --red:#a8182f; --gold:#f2d27a; --radius:16px;
+  }
+  *{box-sizing:border-box;min-width:0}
+  html,body{margin:0;min-height:100%}
+  body{background:radial-gradient(circle at 20% 0%, #1b3762 0%, var(--bg) 60%);background-attachment:fixed;color:var(--ink);
+       font-family:"Segoe UI",system-ui,-apple-system,Roboto,Arial,sans-serif;line-height:1.4;overflow-x:clip}
+  main{max-width:900px;margin:0 auto;padding:18px}
+  .hidden{display:none!important}
+  h1{font-size:clamp(28px,5vw,44px);margin:.2em 0 .1em;line-height:1.1}
+  h1 span{color:var(--accent)}
+  .sub{color:var(--muted);margin:0 0 18px}
+  .panel{background:var(--panel);border-radius:var(--radius);padding:20px;box-shadow:0 8px 30px rgba(0,0,0,.25)}
+  .rules{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:12px;margin:16px 0}
+  .rule{background:var(--panel2);border-radius:12px;padding:12px 14px}
+  .rule b{display:block;color:var(--accent);margin-bottom:4px}
+  button{font:inherit;border:0;border-radius:12px;cursor:pointer;transition:transform .05s, filter .15s}
+  button:active{transform:scale(.97)}
+  button:disabled{opacity:.4;cursor:default}
+  button:focus-visible{outline:3px solid var(--blue);outline-offset:2px}
+  .btn{background:var(--accent);color:#1a1a1a;font-weight:700;padding:12px 22px;font-size:20px;min-height:48px}
+  .btn.secondary{background:var(--panel2);color:var(--ink)}
+  .btn.blue{background:var(--blue);color:#0b1a30}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+  .top{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:12px}
+  .badge{background:var(--panel2);border-radius:999px;padding:6px 14px;font-weight:600;white-space:nowrap;flex:none}
+  .top .row{gap:6px}
+  .badge.score{background:var(--accent);color:#1a1a1a}
+  .badge.dcount{background:var(--red);border:2px solid var(--gold);color:#ffe9a8}
+  .progress{height:8px;background:#0b1628;border-radius:99px;overflow:hidden;margin-bottom:16px}
+  .progress div{height:100%;background:linear-gradient(90deg,var(--blue),var(--accent));width:0;transition:width .4s}
+
+  .card{background:var(--panel);border-radius:var(--radius);padding:22px;text-align:center;box-shadow:0 8px 30px rgba(0,0,0,.25)}
+  .card.alt{box-shadow:0 0 0 3px var(--blue),0 8px 30px rgba(0,0,0,.25)}
+  .tasktype{color:var(--muted);font-size:16px;margin-bottom:6px}
+  .newlevel{display:inline-block;background:var(--accent);color:#1a1a1a;font-weight:700;border-radius:8px;padding:2px 10px;margin-bottom:6px}
+  .question{font-size:clamp(28px,6vw,50px);font-weight:700;margin:6px 0 14px;font-variant-numeric:tabular-nums}
+  .question sup{font-size:.55em}
+  .ben{font-size:.6em;color:#ffd0d0;margin-bottom:6px}
+  .ben s{text-decoration-thickness:3px;text-decoration-color:var(--bad)}
+  .box{display:inline-block;min-width:1.3em;border:3px dashed var(--accent);border-radius:8px;color:var(--accent);padding:0 .15em}
+  .answer{display:inline-flex;align-items:center;justify-content:center;min-width:220px;min-height:64px;
+          font-size:40px;font-weight:700;background:#0b1628;border:3px solid #2b4677;border-radius:12px;
+          padding:4px 16px;margin-bottom:12px;font-variant-numeric:tabular-nums}
+  .answer.empty{color:#3d5a8c}
+  .answer.ok{border-color:var(--ok)} .answer.bad{border-color:var(--bad)}
+  .feedback{min-height:28px;font-size:19px;margin:6px auto 12px;max-width:680px}
+  .feedback .ok{color:var(--ok);font-weight:700} .feedback .bad{color:var(--bad);font-weight:700}
+  .hint{background:#10213d;border-left:5px solid var(--blue);border-radius:10px;padding:10px 14px;text-align:left;font-size:18px;margin:8px auto 12px;max-width:680px}
+  .solution{background:#10213d;border-left:5px solid var(--accent);border-radius:10px;padding:10px 14px;text-align:left;font-size:19px;margin:8px auto 12px;max-width:680px}
+  .solution .head{color:var(--accent);font-weight:700;margin-bottom:4px}
+  .pad{display:grid;grid-template-columns:repeat(3,76px);gap:8px;justify-content:center;margin:8px 0 14px}
+  .pad button{height:58px;font-size:26px;font-weight:700;background:var(--panel2);color:var(--ink)}
+  .pad button.ok{background:var(--ok);color:#06251a}
+  .pad button.del{background:#3a2440}
+  .actions{display:flex;gap:10px;justify-content:center;flex-wrap:wrap}
+  .pop{animation:pop .35s ease}
+  @keyframes pop{0%{transform:scale(.94);opacity:.3}100%{transform:scale(1);opacity:1}}
+  .shake{animation:shake .35s}
+  @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-8px)}75%{transform:translateX(8px)}}
+
+  /* Adventskalender */
+  .cal{background:linear-gradient(160deg,#8e1328,#5c0b1a);border:4px solid var(--gold);border-radius:16px;padding:14px;max-width:520px;margin:8px auto 10px;box-shadow:0 10px 26px rgba(0,0,0,.4)}
+  .cal h3{margin:0 0 10px;font-size:18px;color:#ffe9a8;text-align:center;font-weight:800}
+  .doors{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+  .door{position:relative;aspect-ratio:1;perspective:500px}
+  .inside{position:absolute;inset:0;border-radius:8px;background:radial-gradient(circle at 50% 40%,#fffaf0,#f1d9a8);
+          display:flex;align-items:center;justify-content:center;box-shadow:inset 0 0 0 2px #c9a24a}
+  .inside svg{width:84%;height:84%}
+  .flap{position:absolute;inset:0;border-radius:8px;border:2px solid var(--gold);
+        background:#a8182f radial-gradient(circle,rgba(242,210,122,.55) 1px,transparent 1.7px) 0 0/12px 12px;
+        display:flex;align-items:center;justify-content:center;font-weight:800;font-size:clamp(18px,4.5vw,28px);color:#ffe9a8;
+        transform-origin:left center;transition:transform 1.2s cubic-bezier(.3,.7,.3,1);backface-visibility:hidden;z-index:2;
+        text-shadow:0 2px 0 rgba(0,0,0,.3)}
+  .door.open .flap{transform:rotateY(-112deg)}
+  .door.new .inside{animation:glow 1.4s ease 1s 2}
+  @keyframes glow{50%{box-shadow:inset 0 0 0 2px #c9a24a,0 0 18px 6px rgba(255,214,102,.9)}}
+  .door.locked .flap{background:#4a3a40;border-style:dashed;color:#b9a9ae}
+  .calmsg{color:var(--accent);font-weight:700;margin-top:6px;font-size:18px}
+  .endpic{max-width:520px;margin:12px auto 6px}
+  .endpic svg{width:100%;height:auto;display:block;border-radius:12px;box-shadow:0 8px 24px rgba(0,0,0,.4)}
+  .advent{font-size:clamp(26px,5vw,38px);font-weight:800;color:#ffe9a8;margin:4px 0 2px}
+
+  .center{text-align:center}
+  .stars{font-size:44px;letter-spacing:6px;margin:6px 0;color:var(--accent)}
+  table{border-collapse:collapse;margin:12px auto;font-size:17px}
+  td,th{padding:6px 12px;border-bottom:1px solid #2b4677;text-align:left}
+  th{color:var(--muted);font-weight:600}
+  td.okc{color:var(--ok)} td.altc{color:var(--blue)} td.badc{color:var(--bad)}
+  .muted{color:var(--muted)}
+  kbd{background:var(--panel2);border-radius:6px;padding:1px 6px;font-size:.9em}
+  @media (max-width:520px){ main{padding:12px} .badge{padding:5px 10px;font-size:14px} .pad{grid-template-columns:repeat(3,64px)} .doors{gap:7px} .cal{padding:10px} td,th{padding:5px 6px;font-size:14px} }
+  @media (prefers-reduced-motion:reduce){ .flap{transition:none} .door.new .inside,.pop,.shake{animation:none} }
+</style>
+</head>
+<body>
+<main>
+
+  <!-- START -->
+  <section id="start">
+    <h1>Divisions-<span>Adventskalender</span></h1>
+    <p class="sub">Mathe Klasse 5 · 10 Aufgaben, 10 Türchen. Jede richtig gelöste Aufgabe öffnet ein Türchen. Was dahinter steckt, ist eine Überraschung!</p>
+    <div class="panel">
+      <div class="rules">
+        <div class="rule"><b>Stufe 1 · Aufwärmen</b>Aufgabe 1–2: durch einstellige Zahlen teilen. 10 Punkte.</div>
+        <div class="rule"><b>Stufe 2 · Zweistellig</b>Aufgabe 3–5: durch zweistellige Zahlen teilen. 20 Punkte.</div>
+        <div class="rule"><b>Stufe 3 · Detektiv</b>Aufgabe 6–8: Lücken füllen und Fehler finden. 30 Punkte.</div>
+        <div class="rule"><b>Stufe 4 · Rechenprofi</b>Aufgabe 9–10: Potenzen und Punkt vor Strich. 40 Punkte.</div>
+      </div>
+      <p class="muted" style="margin:0 0 14px">
+        <b style="color:var(--ink)">So funktioniert es:</b> Ist deine Antwort falsch, bekommst du einen Tipp und einen zweiten Versuch (halbe Punkte).
+        Klappt es wieder nicht, siehst du den Lösungsweg und bekommst eine <b style="color:var(--ink)">Ersatzaufgabe</b> mit neuen Zahlen.
+        Löst du sie, öffnet sich dein Türchen trotzdem – nur Punkte gibt es dafür keine.
+        Sind alle 10 Türchen offen, wartet ein großes Adventsbild auf dich.<br>
+        Eingabe mit den Zifferntasten oder der Tastatur (<kbd>Enter</kbd> = Prüfen). Rechne auf Papier mit!</p>
+      <div class="row">
+        <button class="btn" id="startBtn">Spiel starten</button>
+        <span class="muted" id="bestStart"></span>
+      </div>
+    </div>
+  </section>
+
+  <!-- SPIEL -->
+  <section id="game" class="hidden">
+    <div class="top">
+      <div class="badge" id="levelName">Stufe 1</div>
+      <div class="row">
+        <div class="badge" id="taskCount">Aufgabe 1 / 10</div>
+        <div class="badge dcount" id="doorCount">Türchen 0 / 10</div>
+        <div class="badge score" id="score">0 Punkte</div>
+      </div>
+    </div>
+    <div class="progress"><div id="bar"></div></div>
+
+    <div class="card" id="card">
+      <div id="levelNote"></div>
+      <div class="tasktype" id="taskType"></div>
+      <div class="question" id="question"></div>
+      <div id="numArea"><div class="answer empty" id="answer">?</div></div>
+      <div class="feedback" id="feedback"></div>
+      <div class="hint hidden" id="hint"></div>
+      <div class="solution hidden" id="solution"></div>
+      <div class="hidden" id="calWrap">
+        <div class="cal" id="cal"></div>
+        <div class="calmsg" id="calMsg"></div>
+      </div>
+      <div class="pad" id="pad"></div>
+      <div class="actions">
+        <button class="btn blue" id="hintBtn">Tipp (halbe Punkte)</button>
+        <button class="btn hidden" id="nextBtn">Weiter</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- ENDE -->
+  <section id="end" class="hidden">
+    <div class="panel center">
+      <div class="advent">Frohe Adventszeit!</div>
+      <div class="cal" id="calEnd"></div>
+      <p id="picNote" class="muted"></p>
+      <div class="endpic" id="endPic"></div>
+      <div class="stars" id="stars"></div>
+      <p id="endText"></p>
+      <table id="endTable"></table>
+      <p class="muted" id="bestEnd"></p>
+      <div class="row" style="justify-content:center">
+        <button class="btn" id="againBtn">Nochmal spielen</button>
+        <button class="btn secondary" id="menuBtn">Zum Start</button>
+      </div>
+    </div>
+  </section>
+
+</main>
+
+<script>
+{
+'use strict';
+/* ==========================================================
+   Feste Aufgaben – für alle Schüler gleich, damit die Lehrkraft
+   sie besprechen kann. Alle Divisionen gehen ohne Rest auf.
+   ========================================================== */
+const NB = ' ';
+const fmt = n => String(n).replace(/\B(?=(\d{3})+(?!\d))/g, NB);
+const BOX = '<span class="box">□</span>';
+const pick = arr => arr[Math.floor(Math.random() * arr.length)];
+const shuffle = arr => { const a = arr.slice(); for (let i = a.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [a[i], a[j]] = [a[j], a[i]]; } return a; };
+const NULL_MSG = 'Fast! Du hast eine <b>Null im Ergebnis</b> vergessen. Ist die heruntergeholte Zahl kleiner als der Divisor, schreibst du eine 0 ins Ergebnis.';
+const hasInnerZero = q => String(q).slice(1, -1).includes('0');
+const dropZero = q => Number(String(q).replace(/0/g, ''));
+
+function ueberschlag(a, d) {
+  const dr = d < 10 ? d : Math.round(d / 10) * 10;
+  let y = a / dr;
+  const mag = Math.pow(10, Math.max(0, Math.floor(Math.log10(y)) - (d < 10 ? 0 : 1)));
+  y = Math.max(mag, Math.round(y / mag) * mag);
+  const x = dr * y;
+  return `<b>Überschlag:</b> ${d < 10 ? '' : `${d} ≈ ${dr} und `}${fmt(a)} ≈ ${fmt(x)}. ${fmt(x)} : ${dr} = ${fmt(y)}. Das Ergebnis ist also ungefähr ${fmt(y)}${d < 10 ? '' : ' (grob geschätzt)'}.`;
+}
+
+function divT(a, d) {
+  const q = a / d;
+  const t = { label: d < 10 ? 'Schriftlich dividieren' : 'Schriftlich dividieren (zweistelliger Divisor)',
+    expr: `${a} : ${d}`, answer: q, show: `${fmt(a)} : ${d} = ?`,
+    hint: ueberschlag(a, d) + ` Das Ergebnis hat ${String(q).length} Stellen.`,
+    sol: `${fmt(a)} : ${d} = <b>${fmt(q)}</b><br>Probe: ${fmt(q)} · ${d} = ${fmt(a)}`, traps: [] };
+  if (hasInnerZero(q)) t.traps.push({ v: dropZero(q), m: NULL_MSG });
+  return t;
+}
+function luDividend(d, q) {
+  const a = d * q;
+  return { label: 'Lücke füllen: Welche Zahl gehört ins Kästchen?', expr: `□ : ${d} = ${q}`, answer: a,
+    show: `${BOX} : ${d} = ${fmt(q)}`,
+    hint: `Nutze die <b>Umkehraufgabe</b>: Das Kästchen ist ${fmt(q)} · ${d}.`,
+    sol: `${BOX} = ${fmt(q)} · ${d} = <b>${fmt(a)}</b><br>Probe: ${fmt(a)} : ${d} = ${fmt(q)}`, traps: [] };
+}
+function luDivisor(a, q) {
+  const d = a / q;
+  const steps = [10, 20, 30, 40].map(k => `${fmt(q)} · ${k} = ${fmt(q * k)}`).join(', ');
+  return { label: 'Lücke füllen: Durch welche Zahl wurde geteilt?', expr: `${a} : □ = ${q}`, answer: d,
+    show: `${fmt(a)} : ${BOX} = ${fmt(q)}`,
+    hint: `<b>Eingrenzen:</b> ${steps}. Zwischen welchen Zehnern liegt ${fmt(a)}? Dann die Einerziffer: Womit muss ${fmt(q)} · ${BOX} enden?`,
+    sol: `${BOX} = <b>${d}</b>, denn ${fmt(q)} · ${d} = ${fmt(a)}`, traps: [] };
+}
+function detect(a, d, wrong) {
+  const q = a / d;
+  return { label: 'Fehlerdetektiv: Prüfe Bens Ergebnis und gib das richtige ein', expr: `${a} : ${d}`, answer: q,
+    show: `<div class="ben">Ben rechnet: ${fmt(a)} : ${d} = <s>${fmt(wrong)}</s></div>${fmt(a)} : ${d} = ?`,
+    hint: `Mach die <b>Probe</b> mit Bens Ergebnis: ${fmt(wrong)} · ${d} = ${fmt(wrong * d)}. Das passt nicht zu ${fmt(a)}! Rechne selbst und achte auf Nullen im Ergebnis.`,
+    sol: `${fmt(a)} : ${d} = <b>${fmt(q)}</b><br>Ben hat die Null im Ergebnis vergessen.<br>Probe: ${fmt(q)} · ${d} = ${fmt(a)}`,
+    traps: [{ v: wrong, m: 'Das ist Bens falsches Ergebnis! Mach die Probe und rechne selbst.' }] };
+}
+function potSum([b1, e1, d1], [b2, e2, d2]) {
+  const p1 = b1 ** e1, p2 = b2 ** e2, x1 = p1 / d1, x2 = p2 / d2;
+  const t = { label: 'Rechenprofi: Potenz – Punkt – Strich', expr: `${b1}^${e1} : ${d1} + ${b2}^${e2} : ${d2}`, answer: x1 + x2,
+    show: `${b1}<sup>${e1}</sup> : ${d1} + ${b2}<sup>${e2}</sup> : ${d2} = ?`,
+    hint: `Reihenfolge: zuerst die <b>Potenzen</b> (${b1}<sup>${e1}</sup> = ${Array(e1).fill(b1).join(' · ')}), dann die Divisionen, zuletzt die Addition.`,
+    sol: `${b1}<sup>${e1}</sup> = ${fmt(p1)} und ${b2}<sup>${e2}</sup> = ${fmt(p2)}<br>${fmt(p1)} : ${d1} = ${x1} und ${fmt(p2)} : ${d2} = ${x2}<br>${x1} + ${x2} = <b>${x1 + x2}</b>`,
+    traps: [] };
+  const w = (b1 * e1) / d1 + (b2 * e2) / d2;
+  if (Number.isInteger(w)) t.traps.push({ v: w, m: `Achtung: ${b1}<sup>${e1}</sup> heißt ${b1} · ${b1} · … (${e1}-mal), nicht ${b1} · ${e1}.` });
+  return t;
+}
+function pvs(a, b, c) {
+  const r = b / c, t = { label: 'Rechenprofi: Punkt vor Strich', expr: `${a} - ${b} : ${c}`, answer: a - r,
+    show: `${fmt(a)} − ${fmt(b)} : ${c} = ?`,
+    hint: '<b>Punkt vor Strich:</b> Welche Rechnung kommt zuerst dran? Hier steht keine Klammer!',
+    sol: `${fmt(b)} : ${c} = ${r}<br>${fmt(a)} − ${r} = <b>${fmt(a - r)}</b>`, traps: [] };
+  if ((a - b) % c === 0) t.traps.push({ v: (a - b) / c, m: 'Achtung: <b>Punkt vor Strich!</b> Du hast zuerst subtrahiert. Hier steht keine Klammer.' });
+  return t;
+}
+
+const LEVELS = [
+  { name: 'Stufe 1 · Aufwärmen', pts: 10 },
+  { name: 'Stufe 2 · Zweistelliger Divisor', pts: 20 },
+  { name: 'Stufe 3 · Detektiv & Lücken', pts: 30 },
+  { name: 'Stufe 4 · Rechenprofi', pts: 40 }
+];
+const TASKS = [
+  { lv: 0, main: divT(3492, 6),             alt: divT(2916, 4) },
+  { lv: 0, main: divT(5642, 7),             alt: divT(4836, 6) },
+  { lv: 1, main: divT(6912, 18),            alt: divT(5376, 16) },
+  { lv: 1, main: divT(8721, 27),            alt: divT(7912, 23) },
+  { lv: 1, main: divT(8528, 41),            alt: divT(9517, 31) },
+  { lv: 2, main: luDividend(26, 287),       alt: luDividend(19, 345) },
+  { lv: 2, main: detect(6324, 31, 24),      alt: detect(7245, 35, 27) },
+  { lv: 2, main: luDivisor(7448, 266),      alt: luDivisor(6885, 255) },
+  { lv: 3, main: potSum([2, 8, 16], [5, 4, 25]), alt: potSum([3, 5, 27], [6, 3, 24]) },
+  { lv: 3, main: pvs(4896, 3744, 18),       alt: pvs(5202, 2652, 17) }
+];
+const N = TASKS.length;
+const MAX_POINTS = TASKS.reduce((s, t) => s + LEVELS[t.lv].pts, 0);
+
+/* ==========================================================
+   Überraschungen hinter den Türchen (pro Handy ausgelost)
+   ========================================================== */
+const starPts = (cx, cy, R, r) => Array.from({ length: 10 }, (_, k) => { const a = -Math.PI / 2 + k * Math.PI / 5, rr = k % 2 ? r : R; return `${(cx + rr * Math.cos(a)).toFixed(1)},${(cy + rr * Math.sin(a)).toFixed(1)}`; }).join(' ');
+function flakePath() {
+  let d = '';
+  for (let k = 0; k < 6; k++) {
+    const a = k * Math.PI / 3, c = Math.cos(a), s = Math.sin(a);
+    d += `M30 30L${(30 + 23 * c).toFixed(1)} ${(30 + 23 * s).toFixed(1)}`;
+    for (const [r, l] of [[12, 6], [18, 4.5]]) {
+      const bx = 30 + r * c, by = 30 + r * s;
+      for (const sg of [1, -1]) { const b = a + sg * Math.PI / 4; d += `M${bx.toFixed(1)} ${by.toFixed(1)}L${(bx + l * Math.cos(b)).toFixed(1)} ${(by + l * Math.sin(b)).toFixed(1)}`; }
+    }
+  }
+  return d;
+}
+const ICONS = [
+  { name: 'ein Zimtstern', svg: `<polygon points="${starPts(30, 31, 25, 11)}" fill="#a8652e" stroke="#7a4518" stroke-width="2" stroke-linejoin="round"/><polygon points="${starPts(30, 31, 19, 8.5)}" fill="#fffaf0"/>` },
+  { name: 'eine Kerze', svg: `<circle cx="30" cy="13" r="11" fill="#ffd27a" opacity=".45"/><rect x="21" y="22" width="18" height="32" rx="2" fill="#d4243b"/><rect x="21" y="22" width="5" height="32" fill="#ef5b6e"/><path d="M30 22v-4" stroke="#333" stroke-width="1.5"/><path d="M30 4C36 11 36 16 30 18C24 16 24 11 30 4Z" fill="#ffb020"/><path d="M30 10C32 13 32 16 30 17C28 16 28 13 30 10Z" fill="#fff3b0"/>` },
+  { name: 'ein Geschenk', svg: `<rect x="10" y="26" width="40" height="28" rx="2" fill="#2e8b4e"/><rect x="8" y="19" width="44" height="9" rx="2" fill="#3a9e5c"/><rect x="27" y="19" width="6" height="35" fill="#e8c25a"/><path d="M30 19C22 7 11 13 22 19ZM30 19C38 7 49 13 38 19Z" fill="#e8c25a" stroke="#b8922a" stroke-width="1.2"/>` },
+  { name: 'ein Tannenbaum', svg: `<rect x="27" y="46" width="6" height="9" fill="#7a4518"/><path d="M30 10L44 28H36L48 46H12L24 28H16Z" fill="#1f7a3e"/><polygon points="${starPts(30, 9, 6.5, 2.8)}" fill="#ffc533"/><circle cx="24" cy="38" r="2.2" fill="#d4243b"/><circle cx="36" cy="33" r="2.2" fill="#5aa9ff"/><circle cx="34" cy="42" r="2.2" fill="#ffc533"/><circle cx="27" cy="27" r="2" fill="#ffc533"/>` },
+  { name: 'ein Lebkuchenherz', svg: `<path d="M30 52C12 38 6 28 10 19C14 10 26 10 30 19C34 10 46 10 50 19C54 28 48 38 30 52Z" fill="#9a5a2a" stroke="#6e3c16" stroke-width="2"/><path d="M30 46C17 36 13 29 15.5 22C18 16 26 16 30 23C34 16 42 16 44.5 22C47 29 43 36 30 46Z" fill="none" stroke="#fff" stroke-width="2" stroke-dasharray="3 2.5"/><circle cx="30" cy="32" r="3" fill="#ff7aa2"/>` },
+  { name: 'eine Schneeflocke', svg: `<path d="${flakePath()}" stroke="#3b82c4" stroke-width="3" stroke-linecap="round" fill="none"/><circle cx="30" cy="30" r="3.5" fill="#3b82c4"/>` },
+  { name: 'eine Laterne', svg: `<path d="M22 11Q30 2 38 11" fill="none" stroke="#333" stroke-width="2"/><rect x="18" y="11" width="24" height="7" rx="2" fill="#2a2a2a"/><rect x="20" y="18" width="20" height="28" fill="#ffcf5a"/><circle cx="30" cy="32" r="9" fill="#fff1b0"/><path d="M20 18v28M40 18v28M30 18v28" stroke="#2a2a2a" stroke-width="2"/><rect x="16" y="46" width="28" height="7" rx="2" fill="#2a2a2a"/>` },
+  { name: 'eine Glocke', svg: `<path d="M30 11C20 11 17 21 17 30C17 38 13 42 11 45H49C47 42 43 38 43 30C43 21 40 11 30 11Z" fill="#e8b830" stroke="#a8801a" stroke-width="1.5"/><circle cx="30" cy="49" r="4.5" fill="#a8801a"/><path d="M30 11C24 3 16 7 22 12ZM30 11C36 3 44 7 38 12Z" fill="#d4243b"/><path d="M22 23C21 28 21 32 21 37" stroke="#fff3c0" stroke-width="2.5" stroke-linecap="round" opacity=".8"/>` },
+  { name: 'ein goldener Stern', svg: `<polygon points="${starPts(30, 31, 26, 11)}" fill="#ffc533" stroke="#d99a00" stroke-width="2" stroke-linejoin="round"/><polygon points="${starPts(30, 31, 10, 4.5)}" fill="#fff3b0"/>` },
+  { name: 'eine Mandarine', svg: `<circle cx="30" cy="35" r="19" fill="#ff8c1a"/><circle cx="23" cy="28" r="5" fill="#ffb066" opacity=".7"/><circle cx="36" cy="40" r="1" fill="#e06d00"/><circle cx="31" cy="45" r="1" fill="#e06d00"/><circle cx="40" cy="31" r="1" fill="#e06d00"/><path d="M30 16C33 8 42 8 44 11C40 16 34 17 30 16Z" fill="#2e8b4e"/><path d="M30 17v-5" stroke="#5a3a1a" stroke-width="2"/>` },
+  { name: 'ein Schneemann', svg: `<circle cx="30" cy="43" r="13" fill="#fff" stroke="#b8c8dd" stroke-width="1.5"/><circle cx="30" cy="23" r="9" fill="#fff" stroke="#b8c8dd" stroke-width="1.5"/><rect x="22" y="11" width="16" height="4" fill="#222"/><rect x="25" y="3" width="10" height="9" fill="#222"/><circle cx="27" cy="21" r="1.3" fill="#222"/><circle cx="33" cy="21" r="1.3" fill="#222"/><path d="M30 24l8 2l-8 1z" fill="#ff7a1a"/><path d="M21 31h18" stroke="#d4243b" stroke-width="4" stroke-linecap="round"/><circle cx="30" cy="39" r="1.5" fill="#222"/><circle cx="30" cy="46" r="1.5" fill="#222"/>` },
+  { name: 'ein Nikolausstiefel', svg: `<path d="M20 15H38V40C44 40 51 42 52 47C53 52 49 54 45 54H20C18 54 18 52 18 50V15Z" fill="#c8102e"/><rect x="15" y="8" width="26" height="10" rx="4" fill="#fff"/><path d="M18 50h34" stroke="#7a0a1b" stroke-width="3"/>` }
+];
+const DOOR_POS = [7, 3, 10, 1, 5, 9, 2, 6, 4, 8];   // Türchennummern in der Kalender-Anordnung
+
+/* Großes Schlussbild: Adventskranz bei Nacht */
+function seeded(s) { return () => (s = (s * 16807) % 2147483647) / 2147483647; }
+function pictureSVG(p) {
+  const r = seeded(20261127), f1 = v => v.toFixed(1);
+  let s = `<defs>
+    <linearGradient id="${p}sky" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#06112a"/><stop offset=".7" stop-color="#1a3870"/><stop offset="1" stop-color="#2a4e8a"/></linearGradient>
+    <radialGradient id="${p}glow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#ffd27a" stop-opacity=".5"/><stop offset=".6" stop-color="#ffb347" stop-opacity=".12"/><stop offset="1" stop-color="#ffb347" stop-opacity="0"/></radialGradient>
+    <radialGradient id="${p}fglow" cx=".5" cy=".5" r=".5"><stop offset="0" stop-color="#fff1b0" stop-opacity=".8"/><stop offset="1" stop-color="#ffb347" stop-opacity="0"/></radialGradient>
+    <linearGradient id="${p}wax" x1="0" x2="1"><stop offset="0" stop-color="#7d0a1c"/><stop offset=".45" stop-color="#d82a40"/><stop offset="1" stop-color="#6e0918"/></linearGradient>
+    <linearGradient id="${p}wood" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#a06838"/><stop offset="1" stop-color="#55301a"/></linearGradient>
+    <linearGradient id="${p}flame" x1="0" y1="1" x2="0" y2="0"><stop offset="0" stop-color="#ff6a00"/><stop offset=".5" stop-color="#ffc533"/><stop offset="1" stop-color="#fff8d0"/></linearGradient>
+    <mask id="${p}moon"><rect width="500" height="400" fill="#000"/><circle cx="440" cy="58" r="26" fill="#fff"/><circle cx="452" cy="50" r="23" fill="#000"/></mask>
+  </defs><rect width="500" height="400" fill="url(#${p}sky)"/>`;
+  for (let i = 0; i < 80; i++) s += `<circle cx="${f1(r() * 500)}" cy="${f1(r() * 310)}" r="${(.6 + r() * 1.6).toFixed(2)}" fill="#fff" opacity="${(.45 + r() * .55).toFixed(2)}"/>`;
+  const sp = (x, y, k) => `<path d="M${x} ${y - k}L${x + k * .25} ${y - k * .25}L${x + k} ${y}L${x + k * .25} ${y + k * .25}L${x} ${y + k}L${x - k * .25} ${y + k * .25}L${x - k} ${y}L${x - k * .25} ${y - k * .25}Z" fill="#fff7d6"/>`;
+  [[40, 40, 9], [180, 30, 6], [300, 62, 7], [62, 190, 6], [472, 170, 8], [250, 18, 5], [125, 105, 5], [392, 112, 6], [30, 280, 5], [478, 268, 5]].forEach(a => s += sp(...a));
+  s += `<rect width="500" height="400" fill="#fdf0c2" mask="url(#${p}moon)"/>`;
+  for (let i = 0; i < 24; i++) {
+    const x = r() * 500, y = r() * 300, k = 3 + r() * 5; let d = '';
+    for (let a = 0; a < 3; a++) { const an = a * Math.PI / 3, dx = Math.cos(an) * k, dy = Math.sin(an) * k; d += `M${f1(x - dx)} ${f1(y - dy)}L${f1(x + dx)} ${f1(y + dy)}`; }
+    s += `<path d="${d}" stroke="#dbe8ff" stroke-width="1.3" stroke-linecap="round" opacity=".75"/>`;
+  }
+  s += `<ellipse cx="250" cy="215" rx="185" ry="120" fill="url(#${p}glow)"/>`;
+  s += `<rect y="312" width="500" height="88" fill="url(#${p}wood)"/><rect y="312" width="500" height="5" fill="#c58a55"/>`;
+  [335, 352, 371, 389].forEach((y, i) => s += `<path d="M0 ${y} C120 ${y - 4 + i} 260 ${y + 5} 500 ${y - 2}" stroke="#6a3f20" stroke-width="1.2" fill="none" opacity=".55"/>`);
+  const cx = 250, cy = 262, rx = 124, ry = 36, greens = ['#14532d', '#1f6b3a', '#2e8b4e', '#3a9e5c'];
+  const cluster = t => {
+    const x = cx + rx * Math.cos(t), y = cy + ry * Math.sin(t); let g = '';
+    for (let j = 0; j < 5; j++) {
+      const ex = x + (r() - .5) * 20, ey = y + (r() - .5) * 18, rot = Math.floor(r() * 180);
+      g += `<ellipse cx="${f1(ex)}" cy="${f1(ey)}" rx="${f1(9 + r() * 6)}" ry="3.3" fill="${greens[Math.floor(r() * 4)]}" transform="rotate(${rot} ${f1(ex)} ${f1(ey)})"/>`;
+    }
+    return g;
+  };
+  let back = '', front = '';
+  for (let i = 0; i < 120; i++) { const t = i / 120 * 2 * Math.PI; if (Math.sin(t) < 0) back += cluster(t); else front += cluster(t); }
+  const candles = [-2.0, -1.1, 2.6, 0.55].map(t => ({ x: Math.round(cx + rx * Math.cos(t)), y: Math.round(cy + ry * Math.sin(t) + 4), h: Math.sin(t) < 0 ? 72 : 80 })).sort((a, b) => a.y - b.y);
+  const candle = c => {
+    const x = c.x, top = c.y - c.h;
+    return `<circle cx="${x}" cy="${top - 16}" r="30" fill="url(#${p}fglow)"/><rect x="${x - 12}" y="${top}" width="24" height="${c.h}" rx="3" fill="url(#${p}wax)"/><ellipse cx="${x}" cy="${top}" rx="12" ry="3.5" fill="#ef5b6e"/><path d="M${x} ${top - 1}v-6" stroke="#2a1a10" stroke-width="1.6"/><path d="M${x} ${top - 32}C${x + 8} ${top - 19} ${x + 8} ${top - 8} ${x} ${top - 6}C${x - 8} ${top - 8} ${x - 8} ${top - 19} ${x} ${top - 32}Z" fill="url(#${p}flame)"/>`;
+  };
+  s += back + candles.map(candle).join('') + front;
+  for (let i = 0; i < 22; i++) { const t = r() * Math.PI, x = cx + rx * Math.cos(t) + (r() - .5) * 16, y = cy + ry * Math.sin(t) + (r() - .5) * 10; s += `<circle cx="${f1(x)}" cy="${f1(y)}" r="${f1(2.6 + r() * 1.4)}" fill="#c8102e" stroke="#7a0a1b" stroke-width=".6"/>`; }
+  for (let i = 0; i < 26; i++) { const t = r() * 2 * Math.PI, x = cx + rx * Math.cos(t) + (r() - .5) * 20, y = cy + ry * Math.sin(t) + (r() - .5) * 12; s += `<circle cx="${f1(x)}" cy="${f1(y)}" r="1.4" fill="#ffd966"/>`; }
+  const bow = (x, y) => `<path d="M${x} ${y}C${x - 19} ${y - 15} ${x - 23} ${y + 9} ${x} ${y}ZM${x} ${y}C${x + 19} ${y - 15} ${x + 23} ${y + 9} ${x} ${y}Z" fill="#c8102e" stroke="#6e0918" stroke-width="1"/><path d="M${x} ${y}l-8 15M${x} ${y}l8 15" stroke="#c8102e" stroke-width="4" stroke-linecap="round"/><circle cx="${x}" cy="${y}" r="3.6" fill="#a00d24"/>`;
+  s += bow(250, 296) + bow(128, 266) + bow(372, 266);
+  return s;
+}
+
+if (typeof module !== 'undefined') module.exports = { TASKS, LEVELS, ICONS, MAX_POINTS, NB };
+
+/* ==========================================================
+   Spielsteuerung
+   ========================================================== */
+if (typeof document !== 'undefined') {
+  const $ = id => document.getElementById(id);
+  const screens = ['start', 'game', 'end'];
+  const show = id => { screens.forEach(s => $(s).classList.toggle('hidden', s !== id)); window.scrollTo(0, 0); };
+  const S = {};
+  const best = {
+    get() { try { return Number(localStorage.getItem('divAdventBest') || 0); } catch (e) { return 0; } },
+    set(v) { try { localStorage.setItem('divAdventBest', String(v)); } catch (e) {} }
+  };
+  const showBest = () => { const b = best.get(); $('bestStart').textContent = b ? `Bestes Ergebnis auf diesem Gerät: ${b} von ${MAX_POINTS} Punkten` : ''; };
+
+  ['7', '8', '9', '4', '5', '6', '1', '2', '3', '⌫', '0', 'OK'].forEach(k => {
+    const b = document.createElement('button');
+    b.textContent = k;
+    if (k === 'OK') b.className = 'ok';
+    if (k === '⌫') { b.className = 'del'; b.setAttribute('aria-label', 'Löschen'); }
+    b.addEventListener('click', () => key(k === '⌫' ? 'Backspace' : k === 'OK' ? 'Enter' : k));
+    $('pad').appendChild(b);
+  });
+  document.addEventListener('keydown', e => {
+    if ($('game').classList.contains('hidden')) return;
+    if (/^[0-9]$/.test(e.key) || e.key === 'Backspace' || e.key === 'Enter') { e.preventDefault(); key(e.key); }
+  });
+
+  function buildCal(el) {
+    el.innerHTML = `<h3>Mein Adventskalender</h3><div class="doors">${DOOR_POS.map(n =>
+      `<div class="door" id="${el.id}-d${n}"><div class="inside"></div><div class="flap">${n}</div></div>`).join('')}</div>`;
+  }
+  function openDoor(el, n, animate) {
+    const d = $(`${el.id}-d${n}`), ic = S.icons[n - 1];
+    d.querySelector('.inside').innerHTML = `<svg viewBox="0 0 60 60" role="img" aria-label="${ic.name}">${ic.svg}</svg>`;
+    if (!animate) { d.classList.add('open'); return; }
+    d.classList.add('new');
+    setTimeout(() => d.classList.add('open'), 250);
+  }
+
+  function newGame() {
+    S.i = 0; S.score = 0;
+    S.res = TASKS.map(() => ({ pts: 0, open: false, alt: false }));
+    S.icons = shuffle(ICONS).slice(0, N);          // Überraschungen pro Handy neu gemischt
+    buildCal($('cal'));
+    show('game');
+    loadTask('main');
+  }
+  function loadTask(phase) {
+    const E = TASKS[S.i], L = LEVELS[E.lv], T = E[phase];
+    Object.assign(S, { phase, T, input: '', tries: 0, helped: false, done: false, next: null });
+    const opened = S.res.filter(r => r.open).length;
+    $('levelName').textContent = L.name;
+    $('taskCount').textContent = `Aufgabe ${S.i + 1} / ${N}`;
+    $('doorCount').textContent = `Türchen ${opened} / ${N}`;
+    $('score').textContent = `${S.score} Punkte`;
+    $('bar').style.width = `${(S.i / N) * 100}%`;
+    const newLevel = phase === 'main' && (S.i === 0 || TASKS[S.i - 1].lv !== E.lv);
+    $('levelNote').innerHTML = newLevel ? `<span class="newlevel">${S.i === 0 ? 'Los geht’s' : 'Neue Stufe'}: ${L.name} · ${L.pts} Punkte pro Aufgabe</span>` : '';
+    $('taskType').textContent = phase === 'main'
+      ? `Aufgabe ${S.i + 1} · ${T.label}`
+      : `Ersatzaufgabe zu Aufgabe ${S.i + 1} · Löse sie, dann öffnet sich Türchen ${S.i + 1}`;
+    $('card').classList.toggle('alt', phase === 'alt');
+    $('question').innerHTML = T.show;
+    $('feedback').innerHTML = '';
+    $('hint').classList.add('hidden'); $('hint').innerHTML = T.hint;
+    $('solution').classList.add('hidden'); $('solution').innerHTML = `<div class="head">Lösungsweg</div>${T.sol}`;
+    $('calWrap').classList.add('hidden');
+    $('numArea').classList.remove('hidden');
+    $('pad').classList.remove('hidden');
+    $('hintBtn').classList.remove('hidden'); $('hintBtn').disabled = false;
+    $('hintBtn').textContent = phase === 'main' ? 'Tipp (halbe Punkte)' : 'Tipp';
+    $('nextBtn').classList.add('hidden');
+    renderInput();
+    $('card').classList.remove('pop'); void $('card').offsetWidth; $('card').classList.add('pop');
+  }
+  function renderInput() {
+    const el = $('answer');
+    el.className = 'answer' + (S.input ? '' : ' empty');
+    el.textContent = S.input ? fmt(S.input) : '?';
+  }
+  function key(k) {
+    if (S.done) { if (k === 'Enter') next(); return; }
+    if (/^[0-9]$/.test(k)) { if (S.input.length < 7 && !(S.input === '' && k === '0')) S.input += k; renderInput(); }
+    else if (k === 'Backspace') { S.input = S.input.slice(0, -1); renderInput(); }
+    else if (k === 'Enter' && S.input) check(Number(S.input));
+  }
+  $('hintBtn').addEventListener('click', () => { S.helped = true; $('hint').classList.remove('hidden'); $('hintBtn').disabled = true; });
+  $('nextBtn').addEventListener('click', next);
+
+  function check(val) {
+    const T = S.T, L = LEVELS[TASKS[S.i].lv];
+    S.tries++;
+    if (val === T.answer) {
+      const pts = S.phase === 'main' ? ((S.tries === 1 && !S.helped) ? L.pts : L.pts / 2) : 0;
+      S.score += pts;
+      Object.assign(S.res[S.i], { pts, open: true, alt: S.phase === 'alt' });
+      const praise = pick(['Richtig!', 'Super gerechnet!', 'Klasse!', 'Stark!', 'Spitze!', 'Genau richtig!', 'Prima!']);
+      $('feedback').innerHTML = S.phase === 'main'
+        ? `<span class="ok">${praise} +${pts} Punkte</span>`
+        : `<span class="ok">Geschafft! Du hast die Ersatzaufgabe gelöst.</span>`;
+      $('answer').classList.add('ok');
+      // Erfolgsergebnis: Türchen öffnen
+      $('calWrap').classList.remove('hidden');
+      openDoor($('cal'), S.i + 1, true);
+      $('calMsg').textContent = `Hinter Türchen ${S.i + 1}: ${S.icons[S.i].name}!`;
+      $('doorCount').textContent = `Türchen ${S.res.filter(r => r.open).length} / ${N}`;
+      finish('task', S.i === N - 1 ? 'Zum Ergebnis' : 'Weiter');
+      return;
+    }
+    $('card').classList.remove('shake'); void $('card').offsetWidth; $('card').classList.add('shake');
+    $('answer').classList.add('bad');
+    const trap = T.traps.find(t => t.v === val);
+    if (S.tries < 2) {
+      $('feedback').innerHTML = (trap ? trap.m + '<br>' : '<span class="bad">Leider nicht richtig.</span> ') + 'Schau dir den Tipp an und versuche es noch einmal.';
+      S.helped = true; $('hint').classList.remove('hidden'); $('hintBtn').disabled = true;
+      S.input = ''; setTimeout(renderInput, 600);
+      return;
+    }
+    $('solution').classList.remove('hidden');
+    if (S.phase === 'main') {
+      $('feedback').innerHTML = (trap ? trap.m + '<br>' : '') + '<span class="bad">Das Türchen bleibt noch zu.</span> Lies den Lösungsweg genau. Dann bekommst du eine Ersatzaufgabe mit neuen Zahlen – löst du sie, öffnet sich das Türchen.';
+      finish('alt', 'Zur Ersatzaufgabe');
+    } else {
+      $('feedback').innerHTML = (trap ? trap.m + '<br>' : '') + `<span class="bad">Türchen ${S.i + 1} bleibt diesmal zu.</span> Lies den Lösungsweg und frag nach, wenn du ihn nicht verstehst.`;
+      finish('task', S.i === N - 1 ? 'Zum Ergebnis' : 'Weiter');
+    }
+  }
+  function finish(nextStep, label) {
+    S.done = true; S.next = nextStep;
+    $('pad').classList.add('hidden');
+    $('hintBtn').classList.add('hidden');
+    $('nextBtn').textContent = label;
+    $('nextBtn').classList.remove('hidden');
+    $('score').textContent = `${S.score} Punkte`;
+    if (nextStep === 'task') $('bar').style.width = `${((S.i + 1) / N) * 100}%`;
+    $('nextBtn').focus({ preventScroll: true });
+  }
+  function next() {
+    if (!S.done) return;
+    if (S.next === 'alt') { loadTask('alt'); return; }
+    if (S.i < N - 1) { S.i++; loadTask('main'); return; }
+    endGame();
+  }
+  function endGame() {
+    const opened = S.res.filter(r => r.open).length;
+    buildCal($('calEnd'));
+    S.res.forEach((r, k) => r.open ? openDoor($('calEnd'), k + 1, false) : $(`calEnd-d${k + 1}`).classList.add('locked'));
+    if (opened === N) {
+      $('picNote').textContent = 'Alle 10 Türchen sind offen – hier ist dein großes Adventsbild:';
+      $('endPic').innerHTML = `<svg viewBox="0 0 500 400" role="img" aria-label="Adventskranz mit vier brennenden Kerzen">${pictureSVG('end')}</svg>`;
+      $('endPic').classList.remove('hidden');
+    } else {
+      $('picNote').textContent = `${opened} von 10 Türchen sind offen. Sind alle 10 Türchen offen, erscheint ein großes Adventsbild. Spiel noch einmal, dann schaffst du es!`;
+      $('endPic').innerHTML = ''; $('endPic').classList.add('hidden');
+    }
+    const ratio = S.score / MAX_POINTS;
+    const stars = ratio >= .9 ? 3 : ratio >= .7 ? 2 : ratio >= .4 ? 1 : 0;
+    $('stars').textContent = '★'.repeat(stars) + '☆'.repeat(3 - stars);
+    $('endText').textContent = `Du hast ${S.score} von ${MAX_POINTS} möglichen Punkten erreicht.` +
+      (stars === 3 ? ' Hervorragend – ein echter Divisionsprofi!' : stars === 2 ? ' Stark gerechnet!' :
+       stars === 1 ? ' Guter Anfang. Achte besonders auf Nullen im Ergebnis und mach immer die Probe.' : ' Übe die schriftliche Division noch einmal – die Probe hilft dir!');
+    $('endTable').innerHTML = '<tr><th>Aufgabe</th><th>Ergebnis</th></tr>' + S.res.map((r, k) => {
+      const [cls, txt] = !r.open ? ['badc', 'nicht gelöst'] : r.alt ? ['altc', 'Ersatzaufgabe gelöst'] : ['okc', `richtig · ${r.pts} Punkte`];
+      return `<tr><td>Aufgabe ${k + 1}</td><td class="${cls}">${txt}</td></tr>`;
+    }).join('');
+    if (S.score > best.get()) best.set(S.score);
+    const b = best.get();
+    $('bestEnd').textContent = b ? `Bestes Ergebnis auf diesem Gerät: ${b} von ${MAX_POINTS} Punkten` : '';
+    show('end');
+  }
+
+  $('startBtn').addEventListener('click', newGame);
+  $('againBtn').addEventListener('click', newGame);
+  $('menuBtn').addEventListener('click', () => { showBest(); show('start'); });
+  showBest();
+}
+}
+</script>
+</body>
+</html>
